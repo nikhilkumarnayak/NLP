@@ -30,6 +30,7 @@ sentences = nltk.sent_tokenize(paragraph,"english")
 print("No of sentences in corpus is :- ",len(sentences))
 print("These are the sentences list :- ",sentences)
 
+# Word Tokenizer : It will convert the above corpus to word wise
 words = nltk.word_tokenize(paragraph,"english")
 print("No of words in corpus is :- ",len(words))
 print("These are the words list :- ",words)
