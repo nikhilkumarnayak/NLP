@@ -1,6 +1,8 @@
-# Bag Of Words (BOW)
-## Here we convert the Text into Vector( 1/0 representaiotion) w.r.t feature frequency.
-### BOW has not the semantic meaning of words.
+# TF-IDF (Term Frequency - Inverse Document Frequency)
+## To give the sementic meaing to words by overcome the BOW issue.
+## Formula (TF-IDF =  TF * IDF):-
+### TF = (No. of Repitation of words in sentence)/(No. of words  in sentcence)
+### IDF = log(No. of sentences/No. of sentence containing word)
 
 import nltk
 
@@ -28,31 +30,30 @@ paragraph = """I have three visions for India. In 3000 years of our history, peo
                I was lucky to have worked with all three of them closely and consider this the great opportunity of my life. 
                I see four milestones in my career."""
 
-## cleaning the text
-import re ## Regular Exp
-from nltk.corpus import stopwords ## Stop word
-from nltk.stem.porter import PorterStemmer ## stemming
-from nltk.stem import WordNetLemmatizer ## Lemmatization
+### Cleaning the text
+import re
+from nltk.corpus import stopwords
+from nltk.stem import WordNetLemmatizer
 
-ps = PorterStemmer()
 wordnet = WordNetLemmatizer()
-sentences = nltk.sent_tokenize(paragraph,"english")
+sentences = nltk.sent_tokenize(paragraph,'english')
 
 corpus = []
 
 for i in range(len(sentences)):
-    words = nltk.word_tokenize(sentences[i])
-    reg_exp = "[^a-zA-Z]"
-    review = re.sub(reg_exp, ' ', sentences[i])
+    reg_ex = "[^a-zA-Z]"
+    review = re.sub(reg_ex,' ',sentences[i])
     review = review.lower()
     review = review.split()
     review = [wordnet.lemmatize(word) for word in review if word not in (stopwords.words('english'))]
     review = ' '.join(review)
     corpus.append(review)
+
 print("corpus :- ", corpus)
 
-## Creating the Bag Of Words
-from sklearn.feature_extraction.text import CountVectorizer ## create the BOW
-cv = CountVectorizer()
-bow = cv.fit_transform(corpus).toarray()
-print("Bow :- ", bow)
+### Create the TF-IDF model
+from sklearn.feature_extraction.text import TfidfVectorizer # create TF-IDF
+tvc = TfidfVectorizer()
+tfidf = tvc.fit_transform(corpus).toarray()
+
+print("tfidf :- ", tfidf)

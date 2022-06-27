@@ -1,8 +1,12 @@
-# Bag Of Words (BOW)
-## Here we convert the Text into Vector( 1/0 representaiotion) w.r.t feature frequency.
-### BOW has not the semantic meaning of words.
+# Word2Vec
+
 
 import nltk
+import gensim
+from gensim.models import Word2Vec
+from nltk.corpus import stopwords
+
+import re
 
 paragraph = """I have three visions for India. In 3000 years of our history, people from all over 
                the world have come and invaded us, captured our lands, conquered our minds. 
@@ -28,31 +32,34 @@ paragraph = """I have three visions for India. In 3000 years of our history, peo
                I was lucky to have worked with all three of them closely and consider this the great opportunity of my life. 
                I see four milestones in my career."""
 
-## cleaning the text
-import re ## Regular Exp
-from nltk.corpus import stopwords ## Stop word
-from nltk.stem.porter import PorterStemmer ## stemming
-from nltk.stem import WordNetLemmatizer ## Lemmatization
+## Data Cleaning and Preprocessing
+text = re.sub(r'\[[0-9]*\]',' ',paragraph)
+text = re.sub(r'\s+',' ',text)
+text = text.lower()
+text = re.sub(r'\d',' ',text)
+text = re.sub(r'\s+',' ',text)
 
-ps = PorterStemmer()
-wordnet = WordNetLemmatizer()
-sentences = nltk.sent_tokenize(paragraph,"english")
+print(text)
 
-corpus = []
+## preparing the dataset
+sentences = nltk.sent_tokenize(text)
+
+sentences = [nltk.word_tokenize(sentence) for sentence in sentences]
 
 for i in range(len(sentences)):
-    words = nltk.word_tokenize(sentences[i])
-    reg_exp = "[^a-zA-Z]"
-    review = re.sub(reg_exp, ' ', sentences[i])
-    review = review.lower()
-    review = review.split()
-    review = [wordnet.lemmatize(word) for word in review if word not in (stopwords.words('english'))]
-    review = ' '.join(review)
-    corpus.append(review)
-print("corpus :- ", corpus)
+    sentences[i] = [word for word in sentences[i] if word not in stopwords.words('english')]
+print("sentences :- ", sentences)
 
-## Creating the Bag Of Words
-from sklearn.feature_extraction.text import CountVectorizer ## create the BOW
-cv = CountVectorizer()
-bow = cv.fit_transform(corpus).toarray()
-print("Bow :- ", bow)
+## Training the Word2Vec model
+model = Word2Vec(sentences, min_count=1)
+
+words = model.wv
+print("words :- ", words)
+
+## Finding Word Veectors
+vector = model.wv['war']
+print("vector :- ", vector)
+
+## Most Similar words
+similar = model.wv.most_similar('war')
+print("similar :- ", similar)
